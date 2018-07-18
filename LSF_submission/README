@@ -1,0 +1,13 @@
+Run the cluster algorithm on a computing cluster with Platform LSF.
+
+1) Edit the "script_template.sh"
+2) Make sure required software is availble on computing cluster (R and R-packages igraph and splancs)
+3) Run "bsub < script_template.sh"; additional options may be applicable 
+
+"script_template.sh" details:
+
+#BSUB -n 1         <-- number of nodes is 1
+#BSUB -W 72:00     <-- maximum run time is 72:00. The system will kill the job after that time.
+#BSUB -M 64000000  <-- maximum memory in KB. The system will kill the job if the memory is exceeded. 
+
+Memory and runtime depend on the data size. The values given should be sufficient for 30000 observations.

@@ -1,0 +1,17 @@
+REQUIREMENTS
+
+Python Qt4
+scipy
+matplotlib
+PIL (python image library)
+shapely (Debian: python-shapely)
+
+INSTALL
+
+1) copy all files in a new directory
+2) execute "pyrcc4 resources.qrc -o qrc_resources.py". 
+pyrcc4 can be found for instance in the debian package "pyqt4-dev-tools".
+
+RUN
+
+python roi_select.py

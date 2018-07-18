@@ -1,0 +1,26 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource>
+<file alias="applications-accessories.png">icons/applications-accessories.png</file>
+<file alias="applications-development.png">icons/applications-development.png</file>
+<file alias="applications-office.png">icons/applications-office.png</file>
+<file alias="applications-other.png">icons/applications-other.png</file>
+<file alias="applications-utilities.png">icons/applications-utilities.png</file>
+<file alias="filesave.png">icons/filesave.png</file>
+<file alias="editclear.png">icons/editclear.png</file>
+<file alias="default.png">icons/system-run.png</file>
+<file alias="start.png">icons/media-playback-start.png</file>
+<file alias="stop.png">icons/media-playback-stop.png</file>
+<file alias="info.png">icons/info.png</file>
+<file alias="preferences-desktop-theme.png">icons/preferences-desktop-theme.png</file>
+<file alias="face-glasses.png">icons/face-glasses.png</file>
+<file alias="face-cool.png">icons/face-cool.png</file>
+<file alias="face-smile.png">icons/face-smile.png</file>
+<file alias="filesaveas.png">icons/filesaveas.png</file>
+<file alias="reload.png">icons/reload.png</file>
+<file alias="fileopen.png">icons/fileopen.png</file>
+<file alias="exit.png">icons/exit.png</file>
+<file alias="edit-delete.png">icons/edit-delete.png</file>
+<file alias="edit-clear.png">icons/edit-clear.png</file>
+
+</qresource>
+</RCC>

@@ -1,0 +1,9 @@
+histvalues=1,1
+xlim=0,757
+pbackground=0.5
+alpha=20
+model=Gaussian(prec)
+rseq=5,150,5
+thseq=5,350,5
+ylim=0,3675
+histbins=1,100
