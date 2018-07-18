@@ -1,0 +1,14 @@
+## Clustering
+
+R -f run.R --args --target=<folder-name> --config=<path-to-config-file>
+
+The file <folder-name>/1/data.txt should exist (also possible are numbers other than 1). 
+The path <path-to-config-file> typically is <folder-name>/config.txt
+
+
+## Post processing
+
+R --slave -f postprocessing.R --args --folders="<folder-name>"
+
+Files "<folder-name>/1/data.txt", "<folder-name>/1/r_vs_thresh.txt" and "<folder-name>/1/all_labels.txt.gz" should exist.
+Numbers other than "1" are possible too.
