@@ -681,13 +681,13 @@ class AppForm(QtGui.QMainWindow):
     ''' user interface and main control '''
     MODES = ['Polygon', 'Rectangle']
     POLYMODE, GENRECTMODE = MODES
-    BASEOUTPUTDIR = "/mnt/rclsfserv005/labinacell/bayes_cluster_analysis"
+    BASEOUTPUTDIR = os.environ['HOME']
     def __init__(self, parent=None, args=None):
         QtGui.QMainWindow.__init__(self, parent)
         self.setWindowTitle(APPNAME)
         self._args = args
         self.artist = GmmPlotArtist(alpha=self._args.alpha)
-        self._select_mode = Modes.NOMODE # this needs to be changed
+        self._select_mode = Modes.NOMODE
         self._modeAction = None # Polygon, Rectangle etc.
         self.comp = BlcComputer(args)
         self.comp.setProp(squareLength=2000, dilate=DILATE, threshold=THRESHOLD)
@@ -710,11 +710,9 @@ class AppForm(QtGui.QMainWindow):
         self.createToolbar()
         self.createOptionsToolbar()
         self.create_dock1()
-        #self.create_shape_dock()
         self.make_icons()
 
         self.connect(self.comp.shapes(), SIGNAL("storedShapesChanged"), self.onSavedState)
-        #self.connect(self.shapeWidget, SIGNAL("currentRowChanged(int)"), self.selectShape)
 
         settings = QSettings("blc", "vis")
         self.restoreState(settings.value("MainWindow/State").toByteArray())
@@ -759,18 +757,11 @@ class AppForm(QtGui.QMainWindow):
         self.pix_green.fill(Qt.green)
 
     def create_dock1(self):
-        self.messageDock = QtGui.QDockWidget("Messages") # creates a dock widget with title 'Items'
-        self.messageDock.setObjectName("MessagesDock") # this is required by QSettings to uniquely identify the dock widget
-        self.messageWidg = MessageWidget() # class attribute to make referal easier
-        self.messageDock.setWidget(self.messageWidg) # assign the list widget to the dock widget
-        self.addDockWidget(Qt.LeftDockWidgetArea, self.messageDock) # add the dock widget to the main window (allows more options)
-
-    def create_shape_dock(self):
-        self.shapeDock =  QtGui.QDockWidget("Shapes")
-        self.shapeDock.setObjectName("ShapeDock")
-        self.shapeWidget = QtGui.QListWidget()
-        self.shapeDock.setWidget(self.shapeWidget)
-        self.addDockWidget(Qt.LeftDockWidgetArea, self.shapeDock)
+        self.messageDock = QtGui.QDockWidget("Messages")
+        self.messageDock.setObjectName("MessagesDock")
+        self.messageWidg = MessageWidget()
+        self.messageDock.setWidget(self.messageWidg)
+        self.addDockWidget(Qt.LeftDockWidgetArea, self.messageDock)
 
     def setModeAction(self, activate = True):
         self._modeAction = self.modeGroup.checkedAction().text()
@@ -851,7 +842,6 @@ Michael Hirsch. CLF, STFC. 2017
         QMessageBox.about(self, "About", msg.strip())
 
     def highlightShape(self, x, y):
-        #print("{0}, {1}".format(x,y))
         if not isinstance(x, (float, int)) or not isinstance(y, (float, int)):
             return
         point = Point(x, y)
@@ -945,12 +935,10 @@ Michael Hirsch. CLF, STFC. 2017
                 continue
             points = np.array([ [x, y] for x, y, _ in data ])
             kdtree = self.comp.getTree(colour)
-            #kdtree = MyKdTree(data) # dodgy, goes wrong if order of points is not preserved
             densities = []
 
             for pnt in points:
                 idx = kdtree.ballPoint(pnt, r=DILATE)
-                #densities.append( sum([ kernel(pnt, x) for x in points[idx] ]) )
                 densities.append( sum([ kernel(pnt, x) for x in self.comp[colour].points(idx) ]) )
             all_pts.extend(points)
             all_dens.extend(densities)
@@ -960,7 +948,6 @@ Michael Hirsch. CLF, STFC. 2017
         ''' turn points into shapes '''
         buffer_size = sigma/5.0
 
-        #combined = self._density2multipoly(all_pts, all_dens, THRESHOLD, buffer_size)
         threshold=self.comp.prop('threshold')
         self.message("Threshold={0}".format(threshold))
         combined = self._density2convexhull(all_pts, all_dens, threshold, buffer_size)
@@ -1117,8 +1104,6 @@ Michael Hirsch. CLF, STFC. 2017
             angle, origin, width, height = shape.angle_origin()
             sign = "r{0}-{1}_{2}x{3}_{4:.0f}".format(*map(
                 int, [origin[0], origin[1], width, height, angle*180/np.pi]))
-            #sign = "x{0}y{1}d{2}a{3}".format(*map(
-            #    int, [origin[0], origin[1], angle*180/np.pi, shape.area]))
             basefolder = os.path.split(self._folderBase)[1] + sign + colour
             basefolder = os.path.join(self._outputFolder, basefolder)
             folder = os.path.join(basefolder, str(1))
@@ -1304,10 +1289,8 @@ Michael Hirsch. CLF, STFC. 2017
         for w in [ self.grid_cb, self.alphaLabel, self.alphaSpinBox, self.scatterCheckBox,
                   self.threshLabel, self.threshSpinBox, self.threshButton]:
             self._optionToolbar.addWidget(w)
-            #hbox.setAlignment(w, Qt.AlignLeft)
         self._optionToolbar.addSeparator()
         self._optionToolbar.addWidget(self._indicator)
-        #hbox.addStretch()
 
         self.addToolBar(Qt.BottomToolBarArea, self._optionToolbar)
 
@@ -1316,9 +1299,6 @@ Michael Hirsch. CLF, STFC. 2017
         self.main_frame = QtGui.QWidget()
         self.cb = None
 
-        # Create the mpl Figure and FigCanvas objects.
-        # 5x4 inches, 100 dots-per-inch
-        #
         self.dpi = 100
         self.fig = Figure((8.0, 6.4), dpi=self.dpi)
         self.canvas = FigureCanvas(self.fig)
@@ -1328,8 +1308,6 @@ Michael Hirsch. CLF, STFC. 2017
         self.artist.set_axes(self.axes)
 
         self.canvas.mpl_connect('button_release_event', self.onClick)
-        # Create the navigation toolbar, tied to the canvas
-        #
         self.mpl_toolbar = NavigationToolbar(self.canvas, self.main_frame)
 
         action = QAction("Canvas Pan", self)
@@ -1369,7 +1347,6 @@ Michael Hirsch. CLF, STFC. 2017
 
         vbox = QtGui.QVBoxLayout()
         vbox.addWidget(self.canvas, stretch = 1)
-        #vbox.addLayout(hbox)
 
         self.main_frame.setLayout(vbox)
         self.setCentralWidget(self.main_frame)
@@ -1442,8 +1419,8 @@ Michael Hirsch. CLF, STFC. 2017
 
     def closeEvent(self, event):
         ''' the overridden close event '''
-        settings = QSettings("blc", "vis") # open the config file (~/.config/qt_demo/demo.conf). The concrete path depends on the system and options given
-        settings.setValue("MainWindow/State", QVariant(self.saveState()))  # store the current states of windows
+        settings = QSettings("blc", "vis")
+        settings.setValue("MainWindow/State", QVariant(self.saveState()))
 
 class GmmPlotArtist(object):
     ''' class that creates the plots (but doesn't render it) '''
@@ -1452,7 +1429,6 @@ class GmmPlotArtist(object):
         self.comp  = kwargs.get("comp",  None)
         self.set_alpha(kwargs.get("alpha", None))
         self._lines = []
-        #self._mainPlots = []
         self._dpi = 80
         self._width = 8*2
         self._height = 6*2
