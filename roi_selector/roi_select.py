@@ -35,7 +35,12 @@ import numpy as np
 from scipy.spatial import KDTree
 import csv, json
 
-import qrc_resources
+try:
+    import qrc_resources
+    ToolButtonStyle = Qt.ToolButtonIconOnly
+except:
+    print('No icons available')
+    ToolButtonStyle = Qt.ToolButtonTextOnly
 
 COLOURS = ['red', 'green']
 NANOMICRON = 1000000.0
@@ -1215,6 +1220,7 @@ Michael Hirsch. CLF, STFC. 2017
     def createToolbar(self):
         self._toolbar = QtGui.QToolBar("Main Toolbar")
         self._toolbar.setObjectName("mainToolBar")
+        self._toolbar.setToolButtonStyle(ToolButtonStyle)
 
         self._toolbar.addAction(self.load_file_action)
         self._toolbar.addAction(self.saveRectAction)
